@@ -8,12 +8,13 @@ from jdatetime import datetime, timedelta
 from prettytable import PrettyTable
 
 
-change_dir = lambda : os.chdir('database')
+def change_dir():
+    os.chdir('database')
 
 
 def database_initialize():
     if os.path.exists("database") and os.path.exists("database/rplanner.db"):
-            print("- database is already initialized!")
+        print("- Database is already initialized!")
     else:
         if not os.path.exists("database"):
             os.mkdir('database')
@@ -25,7 +26,7 @@ def database_initialize():
         cur.execute("CREATE TABLE rplanner(Book, Units, Lessons, Pages, Dates)")
         con.commit()
         os.chdir("../")
-        print("- database is successfully initialized!")
+        print("- Database is successfully initialized!\n")
 
 
 def plan_the_review_dates(studied_lessons):
@@ -81,25 +82,33 @@ def get_todays_plans():
 
 
 def main():
+    print("""
+██████╗ ██╗   ██╗██████╗ ██╗      █████╗ ███╗   ██╗███╗   ██╗███████╗██████╗
+██╔══██╗╚██╗ ██╔╝██╔══██╗██║     ██╔══██╗████╗  ██║████╗  ██║██╔════╝██╔══██╗
+██████╔╝ ╚████╔╝ ██████╔╝██║     ███████║██╔██╗ ██║██╔██╗ ██║█████╗  ██████╔╝
+██╔═══╝   ╚██╔╝  ██╔═══╝ ██║     ██╔══██║██║╚██╗██║██║╚██╗██║██╔══╝  ██╔══██╗
+██║        ██║   ██║     ███████╗██║  ██║██║ ╚████║██║ ╚████║███████╗██║  ██║
+╚═╝        ╚═╝   ╚═╝     ╚══════╝╚═╝  ╚═╝╚═╝  ╚═══╝╚═╝  ╚═══╝╚══════╝╚═╝  ╚═╝
+        """)
     if (not os.path.exists("database") or not os.path.exists("database/rplanner.db")):
         database_initialize()
 
     print("[0]- add a new lesson\n[1]- get today's plan")
     print("[2]- delete a lesson's plan\n[3]- initialize the database\n\
 [4]- initialize a new database\n[5]- delete the database\n[6]- exit\n")
-    opt = int(input("~ PyPlanner : "))
+    opt = input("~ PyPlanner : ")
 
-    if opt == 0:
+    if opt == '0':
         get_studied_lessons()
-    elif opt == 1:
+    elif opt == '1':
         get_todays_plans()
-    elif opt == 2:
+    elif opt == '2':
         pass
-    elif opt == 3:
+    elif opt == '3':
         database_initialize()
-    #elif opt == 4:
+    #elif opt == '4':
         #database_initialize(database_name=dname)
-    elif opt == 5:
+    elif opt == '5':
         os.remove('database/rplanner.db')
     else:
         sys.exit()
