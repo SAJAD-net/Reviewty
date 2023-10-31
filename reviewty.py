@@ -37,7 +37,7 @@ def plan_the_review_dates(studied_lessons):
     today = datetime.today()
 
     for lesson in studied_lessons:
-        book, units, lessons, pages = lesson.split(' ')
+        book, units, lessons, pages = lesson.strip().split(' ')
 
         table = PrettyTable(['Book', 'Units', 'Lessons', 'Pages', 'Dates'])
 
@@ -58,7 +58,10 @@ def plan_the_review_dates(studied_lessons):
 
 
 def get_studied_lessons():
-    studied_lessons = input("- Enter the studied lessons seperated with (, ):").split(', ')
+    print("- Enter the studied lessons seperated with (,)")
+    print("- Syntax : [Book] [Units] [Lessons] [Pages], [Book] ....")
+    print("- Example : Pyisics 1 1-2 13-22, Calculus 2-3 * *\n")
+    studied_lessons = input("- Reviewty: ").split(',')
 
     plan_the_review_dates(studied_lessons)
 
@@ -70,6 +73,7 @@ def get_todays_plans():
     cur = con.cursor()
 
     today = datetime.today() + timedelta(days=1)
+    # today = datetime.today()
     plans = cur.execute(f"SELECT * FROM rplanner WHERE Dates='{today.strftime('%Y/%m/%d')}'")
 
     table = PrettyTable(['Book', 'Units', 'Lessons', 'Pages', 'Dates'])
@@ -83,20 +87,19 @@ def get_todays_plans():
 
 def main():
     print("""
-██████╗ ██╗   ██╗██████╗ ██╗      █████╗ ███╗   ██╗███╗   ██╗███████╗██████╗
-██╔══██╗╚██╗ ██╔╝██╔══██╗██║     ██╔══██╗████╗  ██║████╗  ██║██╔════╝██╔══██╗
-██████╔╝ ╚████╔╝ ██████╔╝██║     ███████║██╔██╗ ██║██╔██╗ ██║█████╗  ██████╔╝
-██╔═══╝   ╚██╔╝  ██╔═══╝ ██║     ██╔══██║██║╚██╗██║██║╚██╗██║██╔══╝  ██╔══██╗
-██║        ██║   ██║     ███████╗██║  ██║██║ ╚████║██║ ╚████║███████╗██║  ██║
-╚═╝        ╚═╝   ╚═╝     ╚══════╝╚═╝  ╚═╝╚═╝  ╚═══╝╚═╝  ╚═══╝╚══════╝╚═╝  ╚═╝
-        """)
+██████╗ ███████╗██╗   ██╗██╗███████╗██╗    ██╗████████╗██╗   ██╗
+██╔══██╗██╔════╝██║   ██║██║██╔════╝██║    ██║╚══██╔══╝╚██╗ ██╔╝
+██████╔╝█████╗  ██║   ██║██║█████╗  ██║ █╗ ██║   ██║    ╚████╔╝ 
+██╔══██╗██╔══╝  ╚██╗ ██╔╝██║██╔══╝  ██║███╗██║   ██║     ╚██╔╝  
+██║  ██║███████╗ ╚████╔╝ ██║███████╗╚███╔███╔╝   ██║      ██║   
+╚═╝  ╚═╝╚══════╝  ╚═══╝  ╚═╝╚══════╝ ╚══╝╚══╝    ╚═╝      ╚═╝""")
     if (not os.path.exists("database") or not os.path.exists("database/rplanner.db")):
         database_initialize()
 
     print("[0]- add a new lesson\n[1]- get today's plan")
     print("[2]- delete a lesson's plan\n[3]- initialize the database\n\
 [4]- initialize a new database\n[5]- delete the database\n[6]- exit\n")
-    opt = input("~ PyPlanner : ")
+    opt = input("~ Reviewty : ")
 
     if opt == '0':
         get_studied_lessons()
