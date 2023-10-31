@@ -72,8 +72,7 @@ def get_todays_plans():
     con = sqlite3.connect('reviewty.db')
     cur = con.cursor()
 
-    today = datetime.today() + timedelta(days=1)
-    # today = datetime.today()
+    today = datetime.today()
     plans = cur.execute(f"SELECT * FROM reviewty WHERE Dates='{today.strftime('%Y/%m/%d')}'")
 
     table = PrettyTable(['Book', 'Units', 'Lessons', 'Pages', 'Dates'])
