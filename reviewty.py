@@ -13,17 +13,17 @@ def change_dir():
 
 
 def database_initialize():
-    if os.path.exists("database") and os.path.exists("database/rplanner.db"):
+    if os.path.exists("database") and os.path.exists("database/reviewty.db"):
         print("- Database is already initialized!")
     else:
         if not os.path.exists("database"):
             os.mkdir('database')
         change_dir()
 
-        con = sqlite3.connect("rplanner.db")
+        con = sqlite3.connect("reviewty.db")
         cur = con.cursor()
 
-        cur.execute("CREATE TABLE rplanner(Book, Units, Lessons, Pages, Dates)")
+        cur.execute("CREATE TABLE reviewty(Book, Units, Lessons, Pages, Dates)")
         con.commit()
         os.chdir("../")
         print("- Database is successfully initialized!\n")
@@ -31,7 +31,7 @@ def database_initialize():
 
 def plan_the_review_dates(studied_lessons):
     change_dir()
-    con = sqlite3.connect("rplanner.db")
+    con = sqlite3.connect("reviewty.db")
     cur = con.cursor()
 
     today = datetime.today()
@@ -47,7 +47,7 @@ def plan_the_review_dates(studied_lessons):
             date = today + timedelta(day)
             date = date.strftime("%Y/%m/%d")
 
-            cur.execute(f"INSERT INTO rplanner VALUES(\
+            cur.execute(f"INSERT INTO reviewty VALUES(\
             '{book}', '{units}', '{lessons}', '{pages}', '{date}')")
 
             table.add_row([book, units, lessons, pages, date])
@@ -69,12 +69,12 @@ def get_studied_lessons():
 def get_todays_plans():
     change_dir()
 
-    con = sqlite3.connect('rplanner.db')
+    con = sqlite3.connect('reviewty.db')
     cur = con.cursor()
 
     today = datetime.today() + timedelta(days=1)
     # today = datetime.today()
-    plans = cur.execute(f"SELECT * FROM rplanner WHERE Dates='{today.strftime('%Y/%m/%d')}'")
+    plans = cur.execute(f"SELECT * FROM reviewty WHERE Dates='{today.strftime('%Y/%m/%d')}'")
 
     table = PrettyTable(['Book', 'Units', 'Lessons', 'Pages', 'Dates'])
 
@@ -93,7 +93,8 @@ def main():
 ██╔══██╗██╔══╝  ╚██╗ ██╔╝██║██╔══╝  ██║███╗██║   ██║     ╚██╔╝  
 ██║  ██║███████╗ ╚████╔╝ ██║███████╗╚███╔███╔╝   ██║      ██║   
 ╚═╝  ╚═╝╚══════╝  ╚═══╝  ╚═╝╚══════╝ ╚══╝╚══╝    ╚═╝      ╚═╝""")
-    if (not os.path.exists("database") or not os.path.exists("database/rplanner.db")):
+
+    if (not os.path.exists("database") or not os.path.exists("database/reviewty.db")):
         database_initialize()
 
     print("[0]- add a new lesson\n[1]- get today's plan")
@@ -112,7 +113,7 @@ def main():
     #elif opt == '4':
         #database_initialize(database_name=dname)
     elif opt == '5':
-        os.remove('database/rplanner.db')
+        os.remove('database/reviewty.db')
     else:
         sys.exit()
 
