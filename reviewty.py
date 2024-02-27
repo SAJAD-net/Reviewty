@@ -26,7 +26,6 @@ def database_initialize():
                     Units, Lessons, Pages, Dates)")
         con.commit()
         os.chdir("../")
-        print("- Database is successfully initialized!\n")
 
 
 def plan_the_review_dates(studied_lessons):
@@ -94,6 +93,29 @@ def get_todays_plans():
     print(f"\t\t   Today's plan\n{table}")
 
 
+def get_specific_date_plan():
+    """ gets the plans of a specific day which user enters.
+    the date should be in this format : Year/Month/Day ."""
+
+    os.chdir('.database')
+
+    con = sqlite3.connect('reviewty.db')
+    cur = con.cursor()
+
+    print("- Enter a date to get it's plan, Syntax : Year/Month/Day")
+    sdate = input("- Reviewty: ")
+
+    plans = cur.execute(f"SELECT * FROM reviewty WHERE Dates='{sdate}'")
+
+    table = PrettyTable(['Book', 'Units', 'Lessons', 'Pages', 'Dates'])
+
+    for lesson in plans.fetchall():
+        book, units, lessons, pages, date = lesson
+        table.add_row([book, units, lessons, pages, date])
+
+    print(f"\t\t   {sdate} plan\n{table}")
+
+
 def main():
     """ prints the flag and waits for the user to choose one of the options."""
 
@@ -108,8 +130,10 @@ def main():
     database_initialize()
 
     print("[0]- add a new lesson\n[1]- get today's plan")
-    print("[2]- delete a lesson's plan\n[3]- initialize the database\n\
+    print("[2]- get a specific day's plan\n\
+[3]- initialize the database\n\
 [4]- delete the database\n[5]- exit\n")
+
     opt = input("~ Reviewty : ")
 
     if opt == '0':
@@ -117,11 +141,9 @@ def main():
     elif opt == '1':
         get_todays_plans()
     elif opt == '2':
-        pass
+        get_specific_date_plan()
     elif opt == '3':
         database_initialize()
-    elif opt == '4':
-        os.remove('database/reviewty.db')
     else:
         sys.exit()
 
