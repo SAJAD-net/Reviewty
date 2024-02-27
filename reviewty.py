@@ -8,29 +8,33 @@ from jdatetime import datetime, timedelta
 from prettytable import PrettyTable
 
 
-def change_dir():
-    os.chdir('database')
-
-
 def database_initialize():
-    if os.path.exists("database") and os.path.exists("database/reviewty.db"):
-        print("- Database is already initialized!")
-    else:
-        if not os.path.exists("database"):
-            os.mkdir('database')
-        change_dir()
+    """ first, it checks if the database has already been initialized or not,
+    if not, creates a directory named `.database`.
+    then creates a database named `reviewty.db` in it."""
+
+    if not os.path.exists(".database/reviewty.db"):
+        if not os.path.exists(".database"):
+            os.mkdir('.database')
+
+        os.chdir('.database')
 
         con = sqlite3.connect("reviewty.db")
         cur = con.cursor()
 
-        cur.execute("CREATE TABLE reviewty(Book, Units, Lessons, Pages, Dates)")
+        cur.execute("CREATE TABLE reviewty(Book,\
+                    Units, Lessons, Pages, Dates)")
         con.commit()
         os.chdir("../")
         print("- Database is successfully initialized!\n")
 
 
 def plan_the_review_dates(studied_lessons):
-    change_dir()
+    """ writes the review dates on the database, for the next 1, 3, 7, and 30 days.
+    then prints a table containing the review dates. """
+
+    os.chdir('.database')
+
     con = sqlite3.connect("reviewty.db")
     cur = con.cursor()
 
@@ -40,8 +44,6 @@ def plan_the_review_dates(studied_lessons):
         book, units, lessons, pages = lesson.strip().split(' ')
 
         table = PrettyTable(['Book', 'Units', 'Lessons', 'Pages', 'Dates'])
-
-
 
         for day in 1, 3, 7, 30:
             date = today + timedelta(day)
@@ -58,6 +60,10 @@ def plan_the_review_dates(studied_lessons):
 
 
 def get_studied_lessons():
+    """ gets the studied lessons from user.
+    then sends them to `plan_the_review_date` funciton to set the review dates.
+    """
+
     print("- Enter the studied lessons seperated with (,)")
     print("- Syntax : [Book] [Units] [Lessons] [Pages], [Book] ....")
     print("- Example : Pyisics 1 1-2 13-22, Calculus 2-3 * *\n")
@@ -67,13 +73,17 @@ def get_studied_lessons():
 
 
 def get_todays_plans():
-    change_dir()
+    """ first, it gets today's reviewing plans from the database.
+    then shows them to the user in a table shape. """
+
+    os.chdir('.database')
 
     con = sqlite3.connect('reviewty.db')
     cur = con.cursor()
 
     today = datetime.today()
-    plans = cur.execute(f"SELECT * FROM reviewty WHERE Dates='{today.strftime('%Y/%m/%d')}'")
+    plans = cur.execute(f"SELECT * FROM reviewty\
+                        WHERE Dates='{today.strftime('%Y/%m/%d')}'")
 
     table = PrettyTable(['Book', 'Units', 'Lessons', 'Pages', 'Dates'])
 
@@ -85,20 +95,21 @@ def get_todays_plans():
 
 
 def main():
+    """ prints the flag and waits for the user to choose one of the options."""
+
     print("""
 ██████╗ ███████╗██╗   ██╗██╗███████╗██╗    ██╗████████╗██╗   ██╗
 ██╔══██╗██╔════╝██║   ██║██║██╔════╝██║    ██║╚══██╔══╝╚██╗ ██╔╝
-██████╔╝█████╗  ██║   ██║██║█████╗  ██║ █╗ ██║   ██║    ╚████╔╝ 
-██╔══██╗██╔══╝  ╚██╗ ██╔╝██║██╔══╝  ██║███╗██║   ██║     ╚██╔╝  
-██║  ██║███████╗ ╚████╔╝ ██║███████╗╚███╔███╔╝   ██║      ██║   
+██████╔╝█████╗  ██║   ██║██║█████╗  ██║ █╗ ██║   ██║    ╚████╔╝
+██╔══██╗██╔══╝  ╚██╗ ██╔╝██║██╔══╝  ██║███╗██║   ██║     ╚██╔╝
+██║  ██║███████╗ ╚████╔╝ ██║███████╗╚███╔███╔╝   ██║      ██║
 ╚═╝  ╚═╝╚══════╝  ╚═══╝  ╚═╝╚══════╝ ╚══╝╚══╝    ╚═╝      ╚═╝""")
 
-    if (not os.path.exists("database") or not os.path.exists("database/reviewty.db")):
-        database_initialize()
+    database_initialize()
 
     print("[0]- add a new lesson\n[1]- get today's plan")
     print("[2]- delete a lesson's plan\n[3]- initialize the database\n\
-[4]- initialize a new database\n[5]- delete the database\n[6]- exit\n")
+[4]- delete the database\n[5]- exit\n")
     opt = input("~ Reviewty : ")
 
     if opt == '0':
@@ -109,9 +120,7 @@ def main():
         pass
     elif opt == '3':
         database_initialize()
-    #elif opt == '4':
-        #database_initialize(database_name=dname)
-    elif opt == '5':
+    elif opt == '4':
         os.remove('database/reviewty.db')
     else:
         sys.exit()
