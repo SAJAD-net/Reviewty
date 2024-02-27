@@ -2,9 +2,9 @@
 
 import os
 import sys
+from datetime import datetime, timedelta
 import sqlite3
 import readline
-from jdatetime import datetime, timedelta
 from prettytable import PrettyTable
 
 
@@ -132,10 +132,10 @@ def main():
 
     database_initialize()
 
-    print("[0]- add a new lesson\n[1]- get today's plan")
-    print("[2]- get a specific day's plan\n\
-[3]- initialize the database\n\
-[4]- delete the database\n[5]- exit\n")
+    print("\t[0]- add a new lesson\n\t[1]- get today's plan")
+    print("\t[2]- get a specific day's plan\n\t\
+[3]- initialize the database\n\t\
+[4]- delete the database\n\t[5]- exit\n")
 
     opt = input("~ Reviewty : ")
 
