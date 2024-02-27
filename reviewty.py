@@ -17,14 +17,17 @@ def database_initialize():
         if not os.path.exists(".database"):
             os.mkdir('.database')
 
+        # changing current directory to the .database.
         os.chdir('.database')
 
+        # initializing the database
         con = sqlite3.connect("reviewty.db")
         cur = con.cursor()
 
         cur.execute("CREATE TABLE reviewty(Book,\
                     Units, Lessons, Pages, Dates)")
         con.commit()
+
         os.chdir("../")
 
 
@@ -83,7 +86,7 @@ def get_todays_plans():
     today = datetime.today()
     plans = cur.execute(f"SELECT * FROM reviewty\
                         WHERE Dates='{today.strftime('%Y/%m/%d')}'")
-
+    # initializing table columns.
     table = PrettyTable(['Book', 'Units', 'Lessons', 'Pages', 'Dates'])
 
     for lesson in plans.fetchall():
@@ -144,6 +147,9 @@ def main():
         get_specific_date_plan()
     elif opt == '3':
         database_initialize()
+    elif opt == '4':
+        os.remove(".database/reviewty.db")
+        print('- database is successfully deleted!')
     else:
         sys.exit()
 
